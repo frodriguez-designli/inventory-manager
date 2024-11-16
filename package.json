@@ -6,6 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:migrate:save": "npx prisma migrate dev --preview-feature --create-only",
+    "prisma:migrate:run": "npx prisma migrate deploy --preview-feature",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
