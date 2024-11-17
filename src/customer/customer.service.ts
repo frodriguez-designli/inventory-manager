@@ -12,8 +12,8 @@ export class CustomerService {
     return `This action returns all customer`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  findOne(username: string) {
+    return `This action returns a #${username} customer`;
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
