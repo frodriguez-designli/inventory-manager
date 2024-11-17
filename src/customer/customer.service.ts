@@ -2,11 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Customer } from './entities/customer.entity';
+import { PrismaService } from '../prisma/prisma.service'
+
+import { Customers, Prisma } from '@prisma/client';
 
 @Injectable()
 export class CustomerService {
+
+  constructor(private readonly prisma: PrismaService) {}
   create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
+    return this.prisma.customers.create({data:createCustomerDto});
   }
 
   findAll() {
@@ -17,16 +22,12 @@ export class CustomerService {
     return `This action returns a ${id} customer`;
   }
 
-  findOneByUsername(username: string): Customer {
-    return {
-      customer_id: 1,
-      customer_name: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '123-456-7890',
-      password: 'secret',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
+  findOneByEmail(email: string): Promise<Customer> {
+    return this.prisma.customers.findFirst({
+      where: {
+        email: email
+      }
+    })
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
