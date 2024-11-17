@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:category:seed": "ts-node ./seeds/category.seed.ts",
     "prisma:migrate:save": "npx prisma migrate dev --preview-feature --create-only",
     "prisma:migrate:run": "npx prisma migrate deploy --preview-feature",
     "build": "nest build",
