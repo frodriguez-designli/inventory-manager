@@ -9,9 +9,10 @@ import { PaymentTypeModule } from './payment-type/payment-type.module';
 import { OrderTypeModule } from './order-type/order-type.module';
 import { OrderProductModule } from './order-product/order-product.module';
 import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [CustomerModule, ProductModule, OrderModule, CategoryModule, PaymentTypeModule, OrderTypeModule, OrderProductModule, AuthModule],
+  imports: [CustomerModule, ProductModule, OrderModule, CategoryModule, PaymentTypeModule, OrderTypeModule, OrderProductModule, AuthModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
