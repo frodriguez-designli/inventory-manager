@@ -14,19 +14,19 @@ datasource db {
 }
 
 model Categories {
-  category_id Int        @id
+  category_id Int        @id @default(autoincrement())
   name        String     @db.VarChar(50)
   products    Products[]
 }
 
 model Inventory {
-  inventory_id   Int        @id
+  inventory_id   Int        @id @default(autoincrement())
   inventory_name String     @db.VarChar(50)
   products       Products[]
 }
 
 model Products {
-  product_id    Int             @id
+  product_id    Int             @id @default(autoincrement())
   category_id   Int
   inventory_id  Int
   stock         Int
@@ -42,7 +42,7 @@ model Products {
 }
 
 model Customers {
-  customer_id   Int       @id
+  customer_id   Int       @id @default(autoincrement())
   customer_name String    @db.VarChar(50)
   email         String    @db.VarChar(100)
   phone         String?   @db.VarChar(50)
@@ -54,7 +54,7 @@ model Customers {
 }
 
 model PaymentType {
-  payment_type Int       @id
+  payment_type Int       @id @default(autoincrement())
   name         String    @db.VarChar(50)
   orders       Orders[]
   createdAt    DateTime  @default(now()) @map("createdAt")
@@ -63,7 +63,7 @@ model PaymentType {
 }
 
 model OrderType {
-  order_type Int       @id
+  order_type Int       @id @default(autoincrement())
   name       String    @db.VarChar(50)
   orders     Orders[]
   createdAt  DateTime  @default(now()) @map("createdAt")
@@ -72,7 +72,7 @@ model OrderType {
 }
 
 model Orders {
-  order_id      Int             @id
+  order_id      Int             @id @default(autoincrement())
   customer_id   Int
   order_date    DateTime        @db.Date
   order_type    Int
@@ -88,7 +88,7 @@ model Orders {
 }
 
 model OrderProducts {
-  shipment_id   Int       @id
+  shipment_id   Int       @id @default(autoincrement())
   order_id      Int
   product_id    Int
   shipment_date DateTime  @db.Date
