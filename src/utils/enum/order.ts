@@ -4,3 +4,8 @@ export enum OrderStatusEnum {
     CANCELED = 'CANCELED',
     DELIVERED = 'DELIVERED',
 }
+
+export enum OrderType {
+    TAKE_AWAY = 'TAKE_AWAY',
+    DELIVERY = 'DELIVERY'
+}
