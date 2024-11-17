@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductService {
@@ -22,7 +23,7 @@ export class ProductService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  update(id: number, updateProductDto: Partial<UpdateProductDto>) {
     return this.prisma.products.update({
       where: {
         product_id: id
@@ -30,6 +31,8 @@ export class ProductService {
       data: updateProductDto
     });
   }
+
+
 
   remove(id: number) {
     return this.prisma.products.delete({where:{
