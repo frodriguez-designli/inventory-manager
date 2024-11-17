@@ -46,7 +46,7 @@ model Customers {
   customer_name String    @db.VarChar(50)
   email         String    @db.VarChar(100)
   phone         String?   @db.VarChar(50)
-  password      String    @db.VarChar(50)
+  password      String    @db.VarChar(255)
   orders        Orders[]
   createdAt     DateTime  @default(now()) @map("createdAt")
   updatedAt     DateTime  @updatedAt @map("updatedAt")
