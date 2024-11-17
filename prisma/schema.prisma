@@ -26,49 +26,49 @@ model Inventory {
 }
 
 model Products {
-  product_id      Int             @id
+  product_id    Int             @id
   category_id   Int
   inventory_id  Int
   stock         Int
-  price Decimal 
+  price         Decimal
   product_name  String          @db.VarChar(50)
   description   String?         @db.VarChar(100)
   category      Categories      @relation(fields: [category_id], references: [category_id])
   inventory     Inventory       @relation(fields: [inventory_id], references: [inventory_id])
   orderProducts OrderProducts[]
-  createdAt     DateTime       @default(now()) @map("createdAt")
-  updatedAt     DateTime       @updatedAt @map("updatedAt")
-  deletedAt     DateTime?      @map("deletedAt")
+  createdAt     DateTime        @default(now()) @map("createdAt")
+  updatedAt     DateTime        @updatedAt @map("updatedAt")
+  deletedAt     DateTime?       @map("deletedAt")
 }
 
 model Customers {
-  customer_id   Int      @id
-  customer_name String   @db.VarChar(50)
-  email         String   @db.VarChar(100)
-  phone         String?  @db.VarChar(50)
-  password      String   @db.VarChar(50)
+  customer_id   Int       @id
+  customer_name String    @db.VarChar(50)
+  email         String    @db.VarChar(100)
+  phone         String?   @db.VarChar(50)
+  password      String    @db.VarChar(50)
   orders        Orders[]
-  createdAt     DateTime       @default(now()) @map("createdAt")
-  updatedAt     DateTime       @updatedAt @map("updatedAt")
-  deletedAt     DateTime?      @map("deletedAt")
+  createdAt     DateTime  @default(now()) @map("createdAt")
+  updatedAt     DateTime  @updatedAt @map("updatedAt")
+  deletedAt     DateTime? @map("deletedAt")
 }
 
 model PaymentType {
-  payment_type Int      @id
-  name         String   @db.VarChar(50)
+  payment_type Int       @id
+  name         String    @db.VarChar(50)
   orders       Orders[]
-  createdAt     DateTime       @default(now()) @map("createdAt")
-  updatedAt     DateTime       @updatedAt @map("updatedAt")
-  deletedAt     DateTime?      @map("deletedAt")
+  createdAt    DateTime  @default(now()) @map("createdAt")
+  updatedAt    DateTime  @updatedAt @map("updatedAt")
+  deletedAt    DateTime? @map("deletedAt")
 }
 
 model OrderType {
-  order_type Int      @id
-  name       String   @db.VarChar(50)
+  order_type Int       @id
+  name       String    @db.VarChar(50)
   orders     Orders[]
-  createdAt     DateTime       @default(now()) @map("createdAt")
-  updatedAt     DateTime       @updatedAt @map("updatedAt")
-  deletedAt     DateTime?      @map("deletedAt")
+  createdAt  DateTime  @default(now()) @map("createdAt")
+  updatedAt  DateTime  @updatedAt @map("updatedAt")
+  deletedAt  DateTime? @map("deletedAt")
 }
 
 model Orders {
@@ -82,19 +82,19 @@ model Orders {
   orderType     OrderType       @relation(fields: [order_type], references: [order_type])
   paymentType   PaymentType     @relation(fields: [payment_type], references: [payment_type])
   orderProducts OrderProducts[]
-  createdAt     DateTime       @default(now()) @map("createdAt")
-  updatedAt     DateTime       @updatedAt @map("updatedAt")
-  deletedAt     DateTime?      @map("deletedAt")
+  createdAt     DateTime        @default(now()) @map("createdAt")
+  updatedAt     DateTime        @updatedAt @map("updatedAt")
+  deletedAt     DateTime?       @map("deletedAt")
 }
 
 model OrderProducts {
-  shipment_id   Int      @id
+  shipment_id   Int       @id
   order_id      Int
   product_id    Int
-  shipment_date DateTime @db.Date
-  order         Orders   @relation(fields: [order_id], references: [order_id])
-  product       Products @relation(fields: [product_id], references: [product_id])
-  createdAt     DateTime       @default(now()) @map("createdAt")
-  updatedAt     DateTime       @updatedAt @map("updatedAt")
-  deletedAt     DateTime?      @map("deletedAt")
+  shipment_date DateTime  @db.Date
+  order         Orders    @relation(fields: [order_id], references: [order_id])
+  product       Products  @relation(fields: [product_id], references: [product_id])
+  createdAt     DateTime  @default(now()) @map("createdAt")
+  updatedAt     DateTime  @updatedAt @map("updatedAt")
+  deletedAt     DateTime? @map("deletedAt")
 }
