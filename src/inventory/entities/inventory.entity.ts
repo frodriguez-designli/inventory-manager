@@ -1,9 +1,9 @@
 import { Product } from "src/product/entities/product.entity";
 
-export class Category {
-    category_id: number;
+export class Inventory {
+    inventory_id: number;
   
-    name: string;
+    inventory_name: string;
   
     products: Product[];
   }
