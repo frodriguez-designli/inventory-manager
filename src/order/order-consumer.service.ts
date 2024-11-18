@@ -1,61 +1,68 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { EventPattern, Payload, RmqContext } from '@nestjs/microservices';
-import { RabbitMQService } from 'src/rabbit-mq/rabbit-mq.service';
-import { ProductService } from 'src/product/product.service';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import amqp, { ChannelWrapper } from 'amqp-connection-manager';
+import { Channel } from 'amqplib';
+import { ProductService } from '../product/product.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { RABBITMQ_ORDERS_QUEUE_NAME, RABBITMQ_PAYMENT_QUEUE_NAME } from '../utils/constants/rabbit-mq.constant';
 
 @Injectable()
-export class OrderConsumer {
-  private readonly logger = new Logger(OrderConsumer.name);
-
+export class OrderConsumer implements OnModuleInit {
+  private channelWrapper: ChannelWrapper;
+  
   constructor(
     private readonly productService: ProductService,
-    private readonly rabbitMQService: RabbitMQService,
+    private readonly prisma: PrismaService,
   ) {}
 
-  @EventPattern('process_order')
-  async handleOrder(@Payload() data: any, context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
+  async onModuleInit() {
+    const connection = amqp.connect([process.env.RABBIT_MQ_URL]);
+    this.channelWrapper = connection.createChannel({
+      setup: async (channel: Channel) => {
+        await channel.assertQueue(RABBITMQ_ORDERS_QUEUE_NAME, { durable: true });
+        await channel.assertQueue(RABBITMQ_PAYMENT_QUEUE_NAME, { durable: true });
+        
+        await channel.consume(RABBITMQ_ORDERS_QUEUE_NAME, async (message) => {
+          if (!message) return;
 
-    try {
-      this.logger.log(`Received order processing request: ${JSON.stringify(data)}`);
+          try {
+            const data = JSON.parse(message.content.toString());
+            console.log('Received order', data);
 
-      const { orderId, products } = data;
+            const { orderId, products } = data;
 
-      // Deduct stock for each product in the order
-      for (const { productId, quantity } of products) {
-        const product = await this.productService.findOne(productId);
-        if (!product) {
-          throw new Error(`Product with ID ${productId} not found.`);
-        }
+            for (const { product_id, quantity } of products) {
+              const product = await this.productService.findOne(product_id);
+              
+              if (!product || product.stock < quantity) {
+                throw new Error(`Stock validation failed for product ${product_id}`);
+              }
 
-        if (product.stock < quantity) {
-          throw new Error(`Insufficient stock for product ID ${productId}.`);
-        }
+              console.log('Updated order', product.stock , quantity)
+              await this.productService.update(product_id, {
+                stock: product.stock - quantity
+              });
+            }
+            await this.channelWrapper.sendToQueue(
+              RABBITMQ_PAYMENT_QUEUE_NAME,
+              Buffer.from(JSON.stringify({
+                orderId,
+                amount: data.totalPaid,
+                products,
+              })),
+              { persistent: true }
+            );
 
-        // Deduct stock
-        await this.productService.update(productId, {stock:product.stock - quantity});
+           channel.ack(message);
+          } catch (error) {
+            console.error('Error processing message:', error);
+            channel.nack(message, false, false);
+          }
+        });
       }
+    });
+  }
 
-      // Simulate payment process by publishing a message to the payments queue
-      const paymentQueue = 'payments_queue';
-      const paymentMessage = {
-        orderId,
-        amount: data.totalPrice,
-      };
-
-      const paymentClient = this.rabbitMQService.getClient(paymentQueue);
-      await paymentClient.emit('process_payment', paymentMessage).toPromise();
-
-      this.logger.log(`Order ${orderId} successfully processed. Sent to payment queue.`);
-      
-      // Acknowledge the message
-      channel.ack(message);
-    } catch (error) {
-      this.logger.error(`Failed to process order: ${error.message}`, error.stack);
-
-      // Reject the message without requeueing
-      channel.nack(message, false, false);
-    }
+  async onModuleDestroy() {
+    await this.channelWrapper?.close();
   }
 }
