@@ -71,7 +71,7 @@ export class PaymentConsumer implements OnModuleInit {
 
   private async processPayment(orderId: number, amount: number): Promise<void> {
     // Simulate payment processing with 80% success rate
-    const paymentSuccess = false
+    const paymentSuccess = Math.random() < 0.8;
     
     if (!paymentSuccess) {
       throw new Error('Payment processing failed');

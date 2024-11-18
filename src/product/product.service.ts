@@ -3,16 +3,44 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Product } from './entities/product.entity';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly CACHE_TTL = 3600;
+  constructor(private readonly prisma: PrismaService,   private readonly redisService: RedisService) {}
   create(createProductDto: CreateProductDto) {
     return this.prisma.products.create({data:createProductDto});
   }
 
-  findAll() {
-    return this.prisma.products.findMany();
+
+  async findAll(page = 1, limit = 10, filters = {}) {
+    const cacheKey = `products:${page}:${limit}:${JSON.stringify(filters)}`;
+    
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) return cached;
+
+    const [products, total] = await Promise.all([
+      this.prisma.products.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        where: filters,
+      }),
+      this.prisma.products.count({ where: filters })
+    ]);
+
+    const result = {
+      data: products,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    };
+
+    await this.redisService.set(cacheKey, result, this.CACHE_TTL);
+    return result;
   }
 
   findOne(id: number) {

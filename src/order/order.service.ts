@@ -7,15 +7,20 @@ import { RabbitMQService } from 'src/rabbit-mq/rabbit-mq.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { RABBITMQ_ORDERS_QUEUE_NAME } from 'src/utils/constants/rabbit-mq.constant';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import Redis from 'ioredis';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
   private channelWrapper: ChannelWrapper;
+  private readonly CACHE_TTL = 3600;
+  
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly rabbitMQService: RabbitMQService,
+    private readonly redisService: RedisService
   ) {
     const connection = amqp.connect([process.env.RABBIT_MQ_URL]);
     this.channelWrapper = connection.createChannel({
@@ -25,6 +30,7 @@ export class OrderService {
         });
       },
     });
+
   }
 
   async create(createOrderDto: CreateOrderDto) {
@@ -114,9 +120,48 @@ export class OrderService {
       orderId: order.order_id,
     };
   }
-  findAll() {
-    return this.prisma.orders.findMany();
+  async findAll(page = 1, limit = 10, filters = {}) {
+    const cacheKey = `orders:${page}:${limit}:${JSON.stringify(filters)}`;
+    
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) return cached;
+
+    const [orders, total] = await Promise.all([
+      this.prisma.orders.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        where: filters,
+        include: {
+          customer: {
+            select: { customer_name: true, customer_id: true }
+          },
+          orderProducts: {
+            include: {
+              product: {
+                select: { product_name: true, price: true }
+              }
+            }
+          }
+        },
+        orderBy: { order_date: 'desc' }
+      }),
+      this.prisma.orders.count({ where: filters })
+    ]);
+
+    const result = {
+      data: orders,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    };
+
+    await this.redisService.set(cacheKey, result, this.CACHE_TTL);
+    return result;
   }
+
 
   findOne(id: number) {
     return this.prisma.orders.findUnique({

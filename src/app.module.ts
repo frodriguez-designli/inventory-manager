@@ -14,6 +14,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { OrderStatusModule } from './order-status/order-status.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQModule } from './rabbit-mq/rabbit-mq.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RabbitMQModule } from './rabbit-mq/rabbit-mq.module';
     InventoryModule,
     OrderStatusModule,
     RabbitMQModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
