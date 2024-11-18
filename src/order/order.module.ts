@@ -8,7 +8,7 @@ import { OrderConsumer } from './order-consumer.service';
 
 @Module({
   imports: [RabbitMQModule],
-  controllers: [OrderController, OrderConsumer],
-  providers: [OrderService, ProductService, OrderStatusService],
+  controllers: [OrderController],
+  providers: [OrderService, ProductService, OrderStatusService, OrderConsumer],
 })
 export class OrderModule {}

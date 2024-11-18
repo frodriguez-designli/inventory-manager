@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQService } from './rabbit-mq.service';
-import { RABBITMQ_ORDERS_QUEUE_NAME } from 'src/utils/constants/rabbit-mq.constant';
 
 @Global() // Make this module globally available
 @Module({
@@ -13,7 +12,6 @@ import { RABBITMQ_ORDERS_QUEUE_NAME } from 'src/utils/constants/rabbit-mq.consta
           transport: Transport.RMQ,
           options: {
             urls: [process.env.RABBIT_MQ_URL],
-            queue: RABBITMQ_ORDERS_QUEUE_NAME,
             queueOptions: {
               durable: true,
             },
