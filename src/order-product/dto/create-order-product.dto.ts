@@ -13,6 +13,10 @@ import {
     @IsInt()
     @IsPositive({ message: 'Product ID must be a positive integer.' })
     product_id: number;
+
+    @IsInt()
+    @IsPositive({ message: 'Quantity must be a positive integer.' })
+    quantity: number;
   
     @IsDateString()
     shipment_date: string;

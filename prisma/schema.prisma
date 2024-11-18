@@ -102,6 +102,7 @@ model OrderProducts {
   shipment_id   Int       @id @default(autoincrement())
   order_id      Int
   product_id    Int
+  quantity      Int?
   shipment_date DateTime  @db.Date
   order         Orders    @relation(fields: [order_id], references: [order_id])
   product       Products  @relation(fields: [product_id], references: [product_id])

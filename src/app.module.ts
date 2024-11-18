@@ -12,9 +12,25 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { OrderStatusModule } from './order-status/order-status.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RabbitMqModule } from './rabbit-mq/rabbit-mq.module';
 
 @Module({
-  imports: [CustomerModule, ProductModule, OrderModule, CategoryModule, PaymentTypeModule, OrderTypeModule, OrderProductModule, AuthModule, PrismaModule, InventoryModule, OrderStatusModule],
+  imports: [CustomerModule, 
+    ClientsModule.register([
+      {
+        name: 'MATH_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'cats_queue',
+          queueOptions: {
+            durable: false
+          },
+        },
+      },
+    ]),
+    ProductModule, OrderModule, CategoryModule, PaymentTypeModule, OrderTypeModule, OrderProductModule, AuthModule, PrismaModule, InventoryModule, OrderStatusModule, RabbitMqModule],
   controllers: [AppController],
   providers: [AppService],
 })

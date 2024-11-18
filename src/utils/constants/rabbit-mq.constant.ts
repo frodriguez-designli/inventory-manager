@@ -1,0 +1,1 @@
+export const RABBITMQ_ORDERS_QUEUE_NAME='orders_queue';
