@@ -5,6 +5,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RabbitMQService } from '../rabbit-mq/rabbit-mq.service';
 import { RABBITMQ_PAYMENT_QUEUE_NAME } from '../utils/constants/rabbit-mq.constant';
 import { ProductService } from '../product/product.service';
+import { OrderStatusService } from '@/order-status/order-status.service';
+import { OrderStatusEnum } from '@/utils/enum/order';
 
 @Injectable()
 export class PaymentConsumer implements OnModuleInit {
@@ -16,7 +18,8 @@ export class PaymentConsumer implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rabbitMQService: RabbitMQService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly orderStatusService: OrderStatusService,
   ) {}
 
   async onModuleInit() {
@@ -80,7 +83,7 @@ export class PaymentConsumer implements OnModuleInit {
     await this.prisma.orders.update({
       where: { order_id: orderId },
       data: { 
-        orderStatus: { connect: { order_status_id: 2 } },
+        orderStatus: { connect: { order_status_id: (await this.orderStatusService.findOneByEnum(OrderStatusEnum.PAID)).order_status_id } },
        // payment_date: new Date()
       }
     });
@@ -102,11 +105,8 @@ export class PaymentConsumer implements OnModuleInit {
   private async handleFailedPayment(message: any) {
     const { orderId, products } = JSON.parse(message.content.toString());
     
-   const updateOrder= await this.prisma.orders.update({
+   const updateOrder= await this.prisma.orders.findUnique({
       where: { order_id: orderId },
-      data: {
-        orderStatus: { connect: { order_status_id: 4 } },
-      },
       include:{
         orderProducts:{
             include:{
@@ -129,7 +129,7 @@ export class PaymentConsumer implements OnModuleInit {
       await this.prisma.orders.update({
         where: { order_id: orderId },
         data: {
-          orderStatus: { connect: { order_status_id: 4 } }
+          orderStatus: { connect: { order_status_id: (await this.orderStatusService.findOneByEnum(OrderStatusEnum.CANCELED)).order_status_id} }
         }
       });
   }

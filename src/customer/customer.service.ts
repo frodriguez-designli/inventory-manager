@@ -24,11 +24,17 @@ export class CustomerService {
   }
 
   findOneByEmail(email: string): Promise<Customer> {
-    return this.prisma.customers.findFirst({
-      where: {
-        email: email
-      }
-    })
+    try{
+      return this.prisma.customers.findFirst({
+        where: {
+          email: email
+        }
+      })
+
+    }
+    catch(err){
+      throw new Error(err)
+    }
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {

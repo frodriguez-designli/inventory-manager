@@ -9,6 +9,9 @@ import { RABBITMQ_ORDERS_QUEUE_NAME } from '../utils/constants/rabbit-mq.constan
 import { UpdateOrderDto } from './dto/update-order.dto';
 import Redis from 'ioredis';
 import { RedisService } from '../redis/redis.service';
+import { CATEGORY } from '@/utils/enum/category';
+import { OrderStatusService } from '@/order-status/order-status.service';
+import { OrderStatusEnum } from '@/utils/enum/order';
 
 @Injectable()
 export class OrderService {
@@ -20,7 +23,8 @@ export class OrderService {
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly rabbitMQService: RabbitMQService,
-    private readonly redisService: RedisService
+    private readonly redisService: RedisService,
+    private readonly orderStatusService: OrderStatusService,
   ) {
     const connection = amqp.connect([process.env.RABBIT_MQ_URL]);
     this.channelWrapper = connection.createChannel({
@@ -62,7 +66,7 @@ export class OrderService {
       data: {
         customer: { connect: { customer_id } },
         order_date: new Date(),
-        orderStatus: { connect: { order_status_id: 1 } }, // Pending status
+        orderStatus: { connect: { order_status_id: (await this.orderStatusService.findOneByEnum(OrderStatusEnum.PENDING)).order_status_id} }, 
         orderType: { connect: { order_type } },
         paymentType: { connect: { payment_type } },
         total_paid: totalPaid,
