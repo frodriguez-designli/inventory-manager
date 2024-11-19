@@ -7,7 +7,7 @@ import { RABBITMQ_ORDERS_QUEUE_NAME, RABBITMQ_PAYMENT_QUEUE_NAME } from '../util
 
 @Injectable()
 export class OrderConsumer implements OnModuleInit {
-  private channelWrapper: ChannelWrapper;
+  public channelWrapper: ChannelWrapper;
   
   constructor(
     private readonly productService: ProductService,

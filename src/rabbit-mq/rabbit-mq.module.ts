@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQService } from './rabbit-mq.service';
-import { RABBITMQ_ORDERS_QUEUE_NAME } from 'src/utils/constants/rabbit-mq.constant';
+import { RABBITMQ_ORDERS_QUEUE_NAME } from '../utils/constants/rabbit-mq.constant';
 
 @Global() 
 @Module({

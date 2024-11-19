@@ -8,7 +8,7 @@ import {
     IsEnum,
     IsDate
   } from 'class-validator';
-import { OrderStatusEnum } from 'src/utils/enum/order';
+import { OrderStatusEnum } from '../../utils/enum/order';
   
   export class CreateOrderDto {
     @IsInt()

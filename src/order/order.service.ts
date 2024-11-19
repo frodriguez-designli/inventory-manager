@@ -1,19 +1,19 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { ProductService } from 'src/product/product.service';
-import { RabbitMQService } from 'src/rabbit-mq/rabbit-mq.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { ProductService } from '../product/product.service';
+import { RabbitMQService } from '../rabbit-mq/rabbit-mq.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { RABBITMQ_ORDERS_QUEUE_NAME } from 'src/utils/constants/rabbit-mq.constant';
+import { RABBITMQ_ORDERS_QUEUE_NAME } from '../utils/constants/rabbit-mq.constant';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import Redis from 'ioredis';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
-  private channelWrapper: ChannelWrapper;
+  public channelWrapper: ChannelWrapper;
   private readonly CACHE_TTL = 3600;
   
   constructor(

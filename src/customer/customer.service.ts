@@ -3,7 +3,7 @@ import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Customer } from './entities/customer.entity';
 import { PrismaService } from '../prisma/prisma.service'
-import { hashPassword } from 'src/utils/password/encrypt.password';
+import { hashPassword } from '../utils/password/encrypt.password';
 
 @Injectable()
 export class CustomerService {

@@ -35,6 +35,9 @@ export class RedisService implements OnModuleDestroy {
     return this.redis.keys(pattern);
   }
 
+  async disconnect() {
+    await this.redis.quit();
+  }
   onModuleDestroy() {
     this.redis.disconnect();
   }

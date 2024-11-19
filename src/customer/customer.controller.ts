@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { Public } from 'src/auth/decorators/route.decorator';
+import { Public } from '../auth/decorators/route.decorator';
 @Controller('customer')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}

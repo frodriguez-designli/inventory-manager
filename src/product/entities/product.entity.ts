@@ -1,6 +1,6 @@
-import { Category } from "src/category/entities/category.entity";
-import { Inventory } from "src/inventory/entities/inventory.entity";
-import { OrderProduct } from "src/order-product/entities/order-product.entity";
+import { Category } from "../../category/entities/category.entity";
+import { Inventory } from "../../inventory/entities/inventory.entity";
+import { OrderProduct } from "../../order-product/entities/order-product.entity";
 
 export class Product {
     product_id: number;

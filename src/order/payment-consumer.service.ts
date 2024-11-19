@@ -4,7 +4,7 @@ import { Channel } from 'amqplib';
 import { PrismaService } from '../prisma/prisma.service';
 import { RabbitMQService } from '../rabbit-mq/rabbit-mq.service';
 import { RABBITMQ_PAYMENT_QUEUE_NAME } from '../utils/constants/rabbit-mq.constant';
-import { ProductService } from 'src/product/product.service';
+import { ProductService } from '../product/product.service';
 
 @Injectable()
 export class PaymentConsumer implements OnModuleInit {
