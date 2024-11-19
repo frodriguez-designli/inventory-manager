@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { CustomerService } from '../customer/customer.service';
 import { JwtService } from '@nestjs/jwt';
-import { UnauthorizedException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as passwordUtils from '../utils/password/decrypt.password';
 
 describe('AuthService', () => {
@@ -74,7 +74,7 @@ describe('AuthService', () => {
 
       await expect(service.signIn('nonexistent@example.com', 'password'))
         .rejects
-        .toThrow(UnauthorizedException);
+        .toThrow(NotFoundException);
     });
   });
 });

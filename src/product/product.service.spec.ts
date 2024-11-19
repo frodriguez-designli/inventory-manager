@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Prisma } from '@prisma/client';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -180,11 +181,14 @@ describe('ProductService', () => {
       });
     });
 
-    it('should return null for non-existent product', async () => {
-      jest.spyOn(prismaService.products, 'findUnique').mockResolvedValue(null);
+    it('should throw a NotFoundException for a non-existent product', async () => {
 
-      const result = await service.findOne(999);
-      expect(result).toBeNull();
+      jest.spyOn(prismaService.products, 'findUnique').mockResolvedValue(null);
+    
+      await expect(service.findOne(999)).rejects.toThrow(
+        new NotFoundException('Product with id 999 not found')
+      );
     });
+    
   });
 });

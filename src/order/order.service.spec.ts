@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { ProductService } from '../product/product.service';
 import { RabbitMQService } from '../rabbit-mq/rabbit-mq.service';
+import { OrderStatusService } from '../order-status/order-status.service';
 
 
 jest.mock('../prisma/prisma.service');
@@ -16,6 +17,7 @@ describe('OrderService', () => {
   let prismaService: jest.Mocked<PrismaService>;
   let redisService: jest.Mocked<RedisService>;
   let productService: jest.Mocked<ProductService>;
+  let orderStatusService: jest.Mocked<OrderStatusService>;
   let rabbitMQService: jest.Mocked<RabbitMQService>;
 
   const mockPrismaService = {
@@ -40,6 +42,11 @@ describe('OrderService', () => {
     update: jest.fn(),
   };
 
+  const mockOrderStatusService = {
+    findOne: jest.fn(),
+    findOneByEnum: jest.fn(),
+  };
+
   const mockRabbitMQService = {
     getConnection: jest.fn(),
     getClient: jest.fn(),
@@ -62,6 +69,10 @@ describe('OrderService', () => {
           useValue: mockProductService,
         },
         {
+          provide: OrderStatusService,
+          useValue: mockOrderStatusService,
+        },
+        {
           provide: RabbitMQService,
           useValue: mockRabbitMQService,
         },
@@ -73,6 +84,7 @@ describe('OrderService', () => {
     prismaService = module.get(PrismaService);
     redisService = module.get(RedisService);
     productService = module.get(ProductService);
+    orderStatusService = module.get(OrderStatusService);
     rabbitMQService = module.get(RabbitMQService);
   });
 
