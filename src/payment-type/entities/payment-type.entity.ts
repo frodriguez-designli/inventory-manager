@@ -1,4 +1,4 @@
-import { Order } from "src/order/entities/order.entity";
+import { Order } from "../../order/entities/order.entity";
 
 export class PaymentType {
     payment_type: number;

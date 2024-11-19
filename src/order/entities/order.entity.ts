@@ -1,7 +1,7 @@
-import { Customer } from "src/customer/entities/customer.entity";
-import { OrderProduct } from "src/order-product/entities/order-product.entity";
-import { OrderType } from "src/order-type/entities/order-type.entity";
-import { PaymentType } from "src/payment-type/entities/payment-type.entity";
+import { Customer } from "../../customer/entities/customer.entity";
+import { OrderProduct } from "../../order-product/entities/order-product.entity";
+import { OrderType } from "../../order-type/entities/order-type.entity";
+import { PaymentType } from "../../payment-type/entities/payment-type.entity";
 
 export class Order {
     order_id: number;

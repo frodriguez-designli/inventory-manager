@@ -11,9 +11,28 @@ import { OrderProductModule } from './order-product/order-product.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { OrderStatusModule } from './order-status/order-status.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RabbitMQModule } from './rabbit-mq/rabbit-mq.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
-  imports: [CustomerModule, ProductModule, OrderModule, CategoryModule, PaymentTypeModule, OrderTypeModule, OrderProductModule, AuthModule, PrismaModule, InventoryModule],
+  imports: [
+    CustomerModule,
+
+    ProductModule,
+    OrderModule,
+    CategoryModule,
+    PaymentTypeModule,
+    OrderTypeModule,
+    OrderProductModule,
+    AuthModule,
+    PrismaModule,
+    InventoryModule,
+    OrderStatusModule,
+    RabbitMQModule,
+    RedisModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

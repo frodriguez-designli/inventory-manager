@@ -44,9 +44,9 @@ model Products {
 model Customers {
   customer_id   Int       @id @default(autoincrement())
   customer_name String    @db.VarChar(50)
-  email         String    @db.VarChar(100)
+  email         String    @unique @db.VarChar(100)
   phone         String?   @db.VarChar(50)
-  password      String    @db.VarChar(50)
+  password      String    @db.VarChar(255)
   orders        Orders[]
   createdAt     DateTime  @default(now()) @map("createdAt")
   updatedAt     DateTime  @updatedAt @map("updatedAt")
@@ -71,26 +71,38 @@ model OrderType {
   deletedAt  DateTime? @map("deletedAt")
 }
 
+model OrderStatus {
+  order_status_id Int       @id @default(autoincrement())
+  name            String    @db.VarChar(50)
+  orders          Orders[]
+  createdAt       DateTime  @default(now()) @map("createdAt")
+  updatedAt       DateTime  @updatedAt @map("updatedAt")
+  deletedAt       DateTime? @map("deletedAt")
+}
+
 model Orders {
-  order_id      Int             @id @default(autoincrement())
-  customer_id   Int
-  order_date    DateTime        @db.Date
-  order_type    Int
-  payment_type  Int
-  total_paid    Float
-  customer      Customers       @relation(fields: [customer_id], references: [customer_id])
-  orderType     OrderType       @relation(fields: [order_type], references: [order_type])
-  paymentType   PaymentType     @relation(fields: [payment_type], references: [payment_type])
-  orderProducts OrderProducts[]
-  createdAt     DateTime        @default(now()) @map("createdAt")
-  updatedAt     DateTime        @updatedAt @map("updatedAt")
-  deletedAt     DateTime?       @map("deletedAt")
+  order_id        Int             @id @default(autoincrement())
+  customer_id     Int
+  order_date      DateTime        @db.Date
+  order_type      Int
+  order_status_id Int
+  payment_type    Int
+  total_paid      Decimal
+  orderStatus     OrderStatus     @relation(fields: [order_status_id], references: [order_status_id])
+  customer        Customers       @relation(fields: [customer_id], references: [customer_id])
+  orderType       OrderType       @relation(fields: [order_type], references: [order_type])
+  paymentType     PaymentType     @relation(fields: [payment_type], references: [payment_type])
+  orderProducts   OrderProducts[]
+  createdAt       DateTime        @default(now()) @map("createdAt")
+  updatedAt       DateTime        @updatedAt @map("updatedAt")
+  deletedAt       DateTime?       @map("deletedAt")
 }
 
 model OrderProducts {
   shipment_id   Int       @id @default(autoincrement())
   order_id      Int
   product_id    Int
+  quantity      Int?
   shipment_date DateTime  @db.Date
   order         Orders    @relation(fields: [order_id], references: [order_id])
   product       Products  @relation(fields: [product_id], references: [product_id])

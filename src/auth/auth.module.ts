@@ -5,7 +5,7 @@ import { CustomerModule } from '../customer/customer.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { jwtConstants } from '../utils/constants/jwt.constant';
-import { CustomerService } from 'src/customer/customer.service';
+import { CustomerService } from '../customer/customer.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -15,7 +15,7 @@ import { AuthGuard } from './guards/auth.guard';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '10h' },
     }),
   ],
   providers: [AuthService, CustomerService, 

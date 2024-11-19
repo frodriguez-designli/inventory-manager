@@ -3,15 +3,16 @@ import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Customer } from './entities/customer.entity';
 import { PrismaService } from '../prisma/prisma.service'
-
-import { Customers, Prisma } from '@prisma/client';
+import { hashPassword } from '../utils/password/encrypt.password';
 
 @Injectable()
 export class CustomerService {
 
   constructor(private readonly prisma: PrismaService) {}
-  create(createCustomerDto: CreateCustomerDto) {
-    return this.prisma.customers.create({data:createCustomerDto});
+  async create(createCustomerDto: CreateCustomerDto) {
+    const hashedPassword = await hashPassword(createCustomerDto.password)
+    console.log(hashedPassword)
+    return this.prisma.customers.create({data:{...createCustomerDto, password: hashedPassword}});
   }
 
   findAll() {
@@ -23,11 +24,17 @@ export class CustomerService {
   }
 
   findOneByEmail(email: string): Promise<Customer> {
-    return this.prisma.customers.findFirst({
-      where: {
-        email: email
-      }
-    })
+    try{
+      return this.prisma.customers.findFirst({
+        where: {
+          email: email
+        }
+      })
+
+    }
+    catch(err){
+      throw new Error(err)
+    }
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
@@ -35,6 +42,8 @@ export class CustomerService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} customer`;
+    return this.prisma.customers.delete({where:{
+      customer_id:id
+    }});
   }
 }

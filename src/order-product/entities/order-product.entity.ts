@@ -1,5 +1,5 @@
-import { Order } from "src/order/entities/order.entity";
-import { Product } from "src/product/entities/product.entity";
+import { Order } from "../../order/entities/order.entity";
+import { Product } from "../../product/entities/product.entity";
 
 export class OrderProduct {
     shipment_id: number;
@@ -7,7 +7,9 @@ export class OrderProduct {
     order_id: number;
   
     product_id: number;
-  
+
+    quantity: number;
+
     shipment_date: Date;
   
     createdAt: Date;
